@@ -23,6 +23,7 @@ import android.view.SurfaceView;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -78,6 +79,10 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback {
             lastMessageTime = System.currentTimeMillis();
             Scanner s = new Scanner(m.getPath());
             String command = s.next();
+
+            // Showing the action in the Main Text View:
+            TextView myAwesomeTextView = (TextView)findViewById(R.id.textView1);
+            myAwesomeTextView.setText(command);
 
             // Example to commands received from WEAR:
             if(command.equals("left")) {
