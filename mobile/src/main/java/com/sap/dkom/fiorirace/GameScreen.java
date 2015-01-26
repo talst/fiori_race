@@ -7,8 +7,7 @@ import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.input.GestureDetector.GestureListener;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.utils.Scaling;
-import com.badlogic.gdx.utils.viewport.ScalingViewport;
+import com.badlogic.gdx.utils.viewport.StretchViewport;
 
 public class GameScreen implements Screen, GestureListener {
 
@@ -16,12 +15,13 @@ public class GameScreen implements Screen, GestureListener {
     private TrafficGame trafficGame;
 
     public GameScreen() {
-        stage = new Stage(new ScalingViewport(Scaling.stretch, FioriRace.WIDTH, FioriRace.HEIGHT));
+        stage = new Stage(new StretchViewport(FioriRace.WIDTH, FioriRace.HEIGHT));
         trafficGame = new TrafficGame();
         stage.addActor(trafficGame);
     }
 
     public void resize(int width, int height) {
+        stage.getViewport().update(width, height);
     }
 
     @Override
