@@ -2,14 +2,12 @@ package com.sap.dkom.fiorirace;
 
 import android.app.Activity;
 import android.hardware.Sensor;
-import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.TextView;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -21,10 +19,9 @@ import com.google.android.gms.wearable.Node;
 import com.google.android.gms.wearable.NodeApi;
 import com.google.android.gms.wearable.Wearable;
 
-import java.text.DecimalFormat;
 import java.util.Scanner;
 
-public class MainActivity extends Activity implements SensorEventListener {
+public class MainActivity extends Activity {
 
     public static final String TAG = "WearFiori";
     /**
@@ -43,19 +40,15 @@ public class MainActivity extends Activity implements SensorEventListener {
         }
     };
     private static final boolean D = true;
-    private static final float NS2MS = 1.0f / 1000000.0f;
     SensorManager sensorManager = null;
+    private SensorEventListener mSensorEventListener = new OrientationSensorListener() {
+        @Override
+        protected void handleMovement(String direction) {
+            sendDirction(direction);
+        }
+    };
     private GoogleApiClient mGoogleApiClient = null;
     private Node mPhoneNode = null;
-    private float timestamp;
-    private float currentAzim;
-    private float currentPitch;
-    private float currentRoll;
-    private TextView outputAzim;
-    private TextView outputPitch;
-    private TextView outputRoll;
-    private TextView outputMove;
-    private DecimalFormat decimalFormat;
 
     void findPhoneNode() {
         PendingResult<NodeApi.GetConnectedNodesResult> pending = Wearable.NodeApi.getConnectedNodes(mGoogleApiClient);
@@ -114,11 +107,6 @@ public class MainActivity extends Activity implements SensorEventListener {
         super.onCreate(savedInstanceState);
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         setContentView(R.layout.activity_main);
-        outputAzim = (TextView) findViewById(R.id.azim);
-        outputPitch = (TextView) findViewById(R.id.pitch);
-        outputRoll = (TextView) findViewById(R.id.roll);
-        outputMove = (TextView) findViewById(R.id.move);
-        decimalFormat = new DecimalFormat("#0.000");
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         mGoogleApiClient = new GoogleApiClient.Builder(this)
@@ -150,7 +138,7 @@ public class MainActivity extends Activity implements SensorEventListener {
     @Override
     protected void onPause() {
         super.onPause();
-        sensorManager.unregisterListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR));
+        sensorManager.unregisterListener(mSensorEventListener, sensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR));
         if (mPhoneNode != null) {
             sendToPhone("stop", null, null);
         } else {
@@ -161,7 +149,7 @@ public class MainActivity extends Activity implements SensorEventListener {
     @Override
     protected void onResume() {
         Log.d(TAG, "onResume");
-        sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR), SensorManager.SENSOR_DELAY_GAME);
+        sensorManager.registerListener(mSensorEventListener, sensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR), SensorManager.SENSOR_DELAY_GAME);
         if (mPhoneNode != null) {
             sendToPhone("start", null, null);
         } else {
@@ -210,58 +198,12 @@ public class MainActivity extends Activity implements SensorEventListener {
         sendDirction("left");
     }
 
-    private void sendDirction(String direction) {
+    public void sendDirction(String direction) {
         Log.d(TAG, "sendDirction");
         if (mPhoneNode != null) {
             sendToPhone(direction, null, null);
         }
     }
 
-    @Override
-    public void onSensorChanged(SensorEvent event) {
-        if (event.sensor.getType() == Sensor.TYPE_ROTATION_VECTOR) {
-            if (event.timestamp == 0) {
-                currentAzim = event.values[0];
-                currentPitch = event.values[1];
-                currentRoll = event.values[2];
-            }
-            float dT = (event.timestamp - timestamp) * NS2MS;
-            if (dT > 350) {
-                timestamp = event.timestamp;
 
-                float lastAzim = currentAzim;
-                currentAzim = event.values[0];
-                float dAzim = currentAzim - lastAzim;
-                outputAzim.setText("dAzim: " + decimalFormat.format(dAzim));
-                Log.d(TAG, "dAzim: " + decimalFormat.format(dAzim));
-
-                float lastPitch = currentPitch;
-                currentPitch = event.values[1];
-                float dPitch = currentPitch - lastPitch;
-                outputPitch.setText("dPitch: " + decimalFormat.format(dPitch));
-                Log.d(TAG, "dPitch: " + decimalFormat.format(dPitch));
-
-                float lastRoll = currentRoll;
-                currentRoll = event.values[2];
-                float dRoll = currentRoll - lastRoll;
-                outputRoll.setText("dRoll: " + decimalFormat.format(dRoll));
-                Log.d(TAG, "dRoll: " + decimalFormat.format(dRoll));
-
-                if (dRoll > 0.35) {
-                    Log.d(TAG, "left");
-                    outputMove.setText("left");
-                } else if (dRoll < -0.35) {
-                    Log.d(TAG, "right");
-                    outputMove.setText("right");
-                } else {
-                    outputMove.setText("no movement");
-                }
-            }
-        }
-    }
-
-    @Override
-    public void onAccuracyChanged(Sensor sensor, int accuracy) {
-
-    }
 }
