@@ -5,6 +5,8 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.util.Log;
 
+import java.text.DecimalFormat;
+
 
 abstract public class OrientationSensorListener implements SensorEventListener {
     private static final String TAG = "Sensor listener";
@@ -18,21 +20,25 @@ abstract public class OrientationSensorListener implements SensorEventListener {
     @Override
     public void onSensorChanged(SensorEvent event) {
         if (event.sensor.getType() == Sensor.TYPE_ROTATION_VECTOR) {
-            if (event.timestamp == 0 || moved) {
+            if (event.timestamp == 0) {
                 setCurrentValues(event);
-                moved = false;
-                timestamp = event.timestamp;
             } else {
                 float dT = (event.timestamp - timestamp) * NS2MS;
-                if (dT > 350) {
+                if (dT > 250) {
                     timestamp = event.timestamp;
-                    float dAzim = calcDeltaAzim(event);
-                    float dPitch = calcDeltaPitch(event);
-                    float dRoll = calcDeltaRoll(event);
-                    if (dPitch > 0.35) {
-                        move("right");
-                    } else if (dPitch < -0.35) {
-                        move("left");
+                    if (moved) {
+                        setCurrentValues(event);
+                        moved = false;
+                    } else {
+                        float dAzim = calcDeltaAzim(event);
+                        float dPitch = calcDeltaPitch(event);
+                        Log.d(TAG, "pitch delta: " + new DecimalFormat("#0.000").format(dPitch));
+                        float dRoll = calcDeltaRoll(event);
+                        if (dPitch > 0.35) {
+                            move("right");
+                        } else if (dPitch < -0.35) {
+                            move("left");
+                        }
                     }
                 }
             }
