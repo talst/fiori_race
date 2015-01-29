@@ -1,5 +1,6 @@
 package com.sap.dkom.fiorirace;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.SurfaceHolder;
@@ -27,6 +28,7 @@ public class MainActivity extends AndroidApplication implements SurfaceHolder.Ca
 
     private static final String TAG = "WearFiori";
     private static final boolean D = true;
+    private static Context context;
     public boolean mPreviewRunning = false;
     private GoogleApiClient mGoogleApiClient;
     private Node mWearableNode = null;
@@ -65,10 +67,15 @@ public class MainActivity extends AndroidApplication implements SurfaceHolder.Ca
     private SurfaceHolder mSurfaceHolder;
     private SurfaceView mSurfaceView;
 
+    public static Context getAppContext() {
+        return context;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (D) Log.d(TAG, "onCreate");
+        MainActivity.context = getApplicationContext();
 
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         mGoogleApiClient = new GoogleApiClient.Builder(this)
@@ -311,11 +318,6 @@ public class MainActivity extends AndroidApplication implements SurfaceHolder.Ca
         Log.d(TAG, "surfaceCreated");
     }
 
-    @Override
-    public void surfaceDestroyed(SurfaceHolder holder) {
-        mPreviewRunning = false;
-    }
-
 //    @Override
 //    public boolean onCreateOptionsMenu(Menu menu) {
 //        // Inflate the menu; this adds items to the action bar if it is present.
@@ -334,5 +336,10 @@ public class MainActivity extends AndroidApplication implements SurfaceHolder.Ca
 //        }
 //        return super.onOptionsItemSelected(item);
 //    }
+
+    @Override
+    public void surfaceDestroyed(SurfaceHolder holder) {
+        mPreviewRunning = false;
+    }
 }
 
