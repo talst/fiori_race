@@ -1,27 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     android:layout_gravity="center"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    >
-
-    <SurfaceView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/surfaceView"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true"
-        android:onClick="surfaceView_onClick" />
+    android:onClick="surfaceView_onClick"
+    android:orientation="vertical"
+    tools:context=".MainActivity"
+    tools:deviceIds="wear_square">
 
     <TextView
-        android:id="@+id/text"
+        android:id="@+id/azim"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Hello World" />
+        android:text="@string/hello_world" />
 
-</FrameLayout>
+    <TextView
+        android:id="@+id/pitch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/hello_world" />
+
+    <TextView
+        android:id="@+id/roll"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/hello_world" />
+
+    <TextView
+        android:id="@+id/move"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/hello_world" />
+
+</LinearLayout>

@@ -1,6 +1,9 @@
 package com.sap.dkom.fiorirace;
 
 import android.app.Activity;
+import android.hardware.Sensor;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -20,7 +23,7 @@ import java.util.Scanner;
 
 public class MainActivity extends Activity {
 
-    private static final String TAG = "WearFiori";
+    public static final String TAG = "WearFiori";
     /**
      * Messages from Phone to Wear:
      */
@@ -37,6 +40,13 @@ public class MainActivity extends Activity {
         }
     };
     private static final boolean D = true;
+    SensorManager sensorManager = null;
+    private SensorEventListener mSensorEventListener = new OrientationSensorListener() {
+        @Override
+        protected void handleMovement(String direction) {
+            sendDirction(direction);
+        }
+    };
     private GoogleApiClient mGoogleApiClient = null;
     private Node mPhoneNode = null;
 
@@ -95,6 +105,7 @@ public class MainActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         setContentView(R.layout.activity_main);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
@@ -127,6 +138,7 @@ public class MainActivity extends Activity {
     @Override
     protected void onPause() {
         super.onPause();
+        sensorManager.unregisterListener(mSensorEventListener, sensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR));
         if (mPhoneNode != null) {
             sendToPhone("stop", null, null);
         } else {
@@ -137,6 +149,7 @@ public class MainActivity extends Activity {
     @Override
     protected void onResume() {
         Log.d(TAG, "onResume");
+        sensorManager.registerListener(mSensorEventListener, sensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR), SensorManager.SENSOR_DELAY_GAME);
         if (mPhoneNode != null) {
             sendToPhone("start", null, null);
         } else {
@@ -185,10 +198,12 @@ public class MainActivity extends Activity {
         sendDirction("left");
     }
 
-    private void sendDirction(String direction) {
+    public void sendDirction(String direction) {
         Log.d(TAG, "sendDirction");
         if (mPhoneNode != null) {
             sendToPhone(direction, null, null);
         }
     }
+
+
 }
