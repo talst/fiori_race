@@ -34,7 +34,7 @@ public class TrafficGame extends Table {
     private long lastCarTime = 0;
     private int score = 0;
     private LabelGroup group;
-    private float speed = 1.0f;
+    private float speed = 1.3f;
     private int time = 0;
     private float startTime = TimeUtils.millis();
 
@@ -90,7 +90,7 @@ public class TrafficGame extends Table {
     public void act(float delta) {
 
         super.act(delta * speed);
-        speed += 0.001;
+        //speed += 0.001;
 
         if (TimeUtils.nanoTime() - lastCarTime > 3000000000f) spawnCar();
 
@@ -105,6 +105,7 @@ public class TrafficGame extends Table {
             if (enemyCar.getBounds().x + enemyCar.getWidth() <= 0) {
                 iter.remove();
                 removeActor(enemyCar);
+                score++;
             }
             if (enemyCar.getBounds().overlaps(playerCar.getBounds())) {
                 iter.remove();
@@ -114,14 +115,12 @@ public class TrafficGame extends Table {
                     } else {
                         enemyCar.crash(true, false);
                     }
-                    score++;
                 } else {
                     if (enemyCar.getY() > playerCar.getY()) {
                         enemyCar.crash(false, true);
                     } else {
                         enemyCar.crash(false, false);
                     }
-                    score++;
                 }
                 if (PLAY_SOUNDS) {
                     dropSound.play();
