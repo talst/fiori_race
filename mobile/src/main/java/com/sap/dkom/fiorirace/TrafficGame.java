@@ -45,7 +45,7 @@ public class TrafficGame extends Table {
         addActor(playerCar);
         enemyCars = new Array<>();
         dropSound = Gdx.audio.newSound(Gdx.files.internal("smb_fireworks.wav"));
-        rainMusic = Gdx.audio.newMusic(Gdx.files.internal("afternoon.mp3"));
+        rainMusic = Gdx.audio.newMusic(Gdx.files.internal("smb_fireworks.wav"));
         rainMusic.setLooping(true);
         if (PLAY_MUSIC) {
             rainMusic.play();
