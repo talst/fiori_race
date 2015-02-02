@@ -2,12 +2,12 @@ package com.sap.dkom.fiorirace;
 
 import android.app.Activity;
 import android.hardware.Sensor;
-import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.TextView;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -32,23 +32,40 @@ public class MainActivity extends Activity {
         public void onMessageReceived(MessageEvent m) {
             Scanner s = new Scanner(m.getPath());
             String command = s.next();
-            if (command.equals("stop")) {
-                moveTaskToBack(true);
-            } else if (command.equals("start")) {
-                Log.d(TAG, "mMessageListener start");
+            switch (command) {
+                case "stop":
+                    moveTaskToBack(true);
+                    break;
+                case "start":
+                    Log.d(TAG, "mMessageListener start");
+                    break;
+                case "calibrate":
+                    calibrate(true);
+                    break;
+                case "offCalibrate":
+                    calibrate(false);
+                    break;
             }
         }
     };
+
+    private void calibrate(boolean isCalibrate) {
+        if (isCalibrate) {
+            calibrateTextView.setText("Calibrating");
+            mSensorEventListener.setCalibrate(true);
+        } else {
+            calibrateTextView.setText("GO!");
+            mSensorEventListener.setCalibrate(false);
+        }
+    }
+
     private static final boolean D = true;
     SensorManager sensorManager = null;
-    private SensorEventListener mSensorEventListener = new OrientationSensorListener() {
-        @Override
-        protected void handleMovement(String direction) {
-            sendDirction(direction);
-        }
-    };
+    private OrientationSensorListener mSensorEventListener;
     private GoogleApiClient mGoogleApiClient = null;
     private Node mPhoneNode = null;
+    private TextView calibrateTextView;
+
 
     void findPhoneNode() {
         PendingResult<NodeApi.GetConnectedNodesResult> pending = Wearable.NodeApi.getConnectedNodes(mGoogleApiClient);
@@ -108,6 +125,13 @@ public class MainActivity extends Activity {
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         setContentView(R.layout.activity_main);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        mSensorEventListener = new OrientationSensorListener(this) {
+            @Override
+            protected void handleMovement(String direction) {
+                sendDirction(direction);
+            }
+        };
+        calibrateTextView = (TextView) findViewById(R.id.calibrate);
 
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addConnectionCallbacks(new GoogleApiClient.ConnectionCallbacks() {
@@ -138,7 +162,7 @@ public class MainActivity extends Activity {
     @Override
     protected void onPause() {
         super.onPause();
-        sensorManager.unregisterListener(mSensorEventListener, sensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR));
+        sensorManager.unregisterListener(mSensorEventListener, sensorManager.getDefaultSensor(Sensor.TYPE_GAME_ROTATION_VECTOR));
         if (mPhoneNode != null) {
             sendToPhone("stop", null, null);
         } else {
@@ -149,7 +173,7 @@ public class MainActivity extends Activity {
     @Override
     protected void onResume() {
         Log.d(TAG, "onResume");
-        sensorManager.registerListener(mSensorEventListener, sensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR), SensorManager.SENSOR_DELAY_GAME);
+        sensorManager.registerListener(mSensorEventListener, sensorManager.getDefaultSensor(Sensor.TYPE_GAME_ROTATION_VECTOR), SensorManager.SENSOR_DELAY_GAME);
         if (mPhoneNode != null) {
             sendToPhone("start", null, null);
         } else {
@@ -158,13 +182,6 @@ public class MainActivity extends Activity {
         super.onResume();
     }
 
-    /**
-     * Sending messages to Phone
-     *
-     * @param path
-     * @param data
-     * @param callback
-     */
     private void sendToPhone(String path, byte[] data, final ResultCallback<MessageApi.SendMessageResult> callback) {
         Log.d(TAG, "sendToPhone " + path);
         if (mPhoneNode != null) {
@@ -187,15 +204,9 @@ public class MainActivity extends Activity {
         }
     }
 
-    /**
-     * Clicking on the wear surface
-     *
-     * @param view
-     */
     public void surfaceView_onClick(View view) {
         Log.d(TAG, "surfaceView_onClick");
-        // Just for an example:
-        sendDirction("left");
+        calibrate(!mSensorEventListener.isCalibrate());
     }
 
     public void sendDirction(String direction) {

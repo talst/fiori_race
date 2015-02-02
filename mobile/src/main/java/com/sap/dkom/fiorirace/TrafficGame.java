@@ -25,8 +25,10 @@ public class TrafficGame extends Table {
     public PlayerCar playerCar;
     Sound dropSound;
     Music rainMusic;
-    Label label;
-    Label label2;
+    Label scoreLabel;
+    Live live1;
+    Live live2;
+    Live live3;
     private InfiniteScrollBg backgroundRoad;
     private Array<EnemyCar> enemyCars;
     private long lastCarTime = 0;
@@ -60,17 +62,26 @@ public class TrafficGame extends Table {
         textStyle.font = font;
 
         group = new LabelGroup();
-        label = new Label("Score: " + score, textStyle);
-        label.setBounds(10f, 10f, 1, 2);
-        label.setFontScale(1f, 1f);
-        group.addActor(label);
 
-        label2 = new Label("HeartRate: " + "6", textStyle);
-        label2.setBounds(100f, 10f, 100f, 2);
-        label2.setFontScale(1f, 1f);
-        group.addActor(label2);
+        LabelGroup groupLives = new LabelGroup();
+        live1 = new Live();
+        live1.setBounds(730f, 360, live1.getWidth(), live1.getHeight());
+        groupLives.addActor(live1);
+        live2 = new Live();
+        live2.setBounds(730f, 400, live2.getWidth(), live2.getHeight());
+        groupLives.addActor(live2);
+        live3 = new Live();
+        live3.setBounds(730f, 440, live3.getWidth(), live3.getHeight());
+        groupLives.addActor(live3);
 
-        group.setBounds(780f, 480, 200, 100f);
+        addActor(groupLives);
+
+        scoreLabel = new Label("" + score, textStyle);
+        //scoreLabel.setBounds(10f, 10f, 1, 2);
+        scoreLabel.setFontScale(2f, 2f);
+        group.addActor(scoreLabel);
+
+        group.setBounds(750f, 50, 10, 10);
         group.addAction(Actions.rotateBy(-90));
         addActor(group);
     }
@@ -117,7 +128,7 @@ public class TrafficGame extends Table {
             }
         }
 
-        label.setText("Score: " + score + "      Time: " + time);
+        scoreLabel.setText(score + "");
     }
 
     private void spawnCar() {
