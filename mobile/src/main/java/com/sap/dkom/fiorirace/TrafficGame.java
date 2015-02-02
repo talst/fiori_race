@@ -18,7 +18,7 @@ import java.util.Iterator;
 
 public class TrafficGame extends Table {
     private final static boolean PLAY_MUSIC = false;
-    private final static boolean PLAY_SOUNDS = false;
+    private final static boolean PLAY_SOUNDS = true;
     public final float lane2 = 390;
     public final float lane1 = 240;
     public final float lane0 = 90;
@@ -44,7 +44,7 @@ public class TrafficGame extends Table {
         playerCar = new PlayerCar(this);
         addActor(playerCar);
         enemyCars = new Array<>();
-        dropSound = Gdx.audio.newSound(Gdx.files.internal("kaboom.mp3"));
+        dropSound = Gdx.audio.newSound(Gdx.files.internal("smb_fireworks.wav"));
         rainMusic = Gdx.audio.newMusic(Gdx.files.internal("afternoon.mp3"));
         rainMusic.setLooping(true);
         if (PLAY_MUSIC) {
