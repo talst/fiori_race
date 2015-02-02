@@ -25,6 +25,8 @@ public class TrafficGame extends Table {
     public PlayerCar playerCar;
     Sound dropSound;
     Music rainMusic;
+    Label label;
+    Label label2;
     private InfiniteScrollBg backgroundRoad;
     private Array<EnemyCar> enemyCars;
     private long lastCarTime = 0;
@@ -58,11 +60,17 @@ public class TrafficGame extends Table {
         textStyle.font = font;
 
         group = new LabelGroup();
-        Label label = new Label("Score: " + score, textStyle);
+        label = new Label("Score: " + score, textStyle);
+        label.setBounds(10f, 10f, 1, 2);
         label.setFontScale(1f, 1f);
         group.addActor(label);
 
-        group.setBounds(100f, 100f, 100, 200);
+        label2 = new Label("HeartRate: " + "6", textStyle);
+        label2.setBounds(100f, 10f, 100f, 2);
+        label2.setFontScale(1f, 1f);
+        group.addActor(label2);
+
+        group.setBounds(780f, 480, 200, 100f);
         group.addAction(Actions.rotateBy(-90));
         addActor(group);
     }
@@ -110,7 +118,7 @@ public class TrafficGame extends Table {
             }
         }
 
-//        label.setText("Score: " + score + "      Time: " + time);
+        label.setText("Score: " + score + "      Time: " + time);
     }
 
     private void spawnCar() {
