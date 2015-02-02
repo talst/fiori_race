@@ -1,24 +1,35 @@
 package com.sap.dkom.fiorirace;
 
+import android.content.Context;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.os.Vibrator;
 import android.util.Log;
-
-import java.text.DecimalFormat;
 
 
 abstract public class OrientationSensorListener implements SensorEventListener {
     private static final String TAG = "Sensor listener";
-    private final DecimalFormat decimalFormat = new DecimalFormat("#0.000");
-    private final float[] tempCurrent = new float[16];
     private final float[] angleChange = new float[3];
-    private float[] currentMatrix = null;
-    private boolean movedLeft = false;
-    private boolean movedRight = false;
+    private final Vibrator vibrator;
+    private float[] zeroMatrix = null;
+    private boolean moved;
+    private float[] currentMatrix = new float[16];
+    private long timestamp;
+    private boolean calibrate = false;
 
-    protected OrientationSensorListener() {
+
+    public OrientationSensorListener(MainActivity mainActivity) {
+        vibrator = (Vibrator) mainActivity.getSystemService(Context.VIBRATOR_SERVICE);
+    }
+
+    public boolean isCalibrate() {
+        return calibrate;
+    }
+
+    public void setCalibrate(boolean calibrate) {
+        this.calibrate = calibrate;
     }
 
     @Override
@@ -26,72 +37,61 @@ abstract public class OrientationSensorListener implements SensorEventListener {
 
         if (event.accuracy == SensorManager.SENSOR_STATUS_UNRELIABLE) return;
 
-        if (event.sensor.getType() == Sensor.TYPE_ROTATION_VECTOR) {
-            if (currentMatrix == null) {
+
+        if (event.sensor.getType() == Sensor.TYPE_GAME_ROTATION_VECTOR) {
+            if (calibrate) {
                 calibrate(event);
-            }
-            calcAngelChange(event);
-            if (angleChange[0] > 0.45 && angleChange[1] < 0) {
-                currentMatrix = tempCurrent.clone();
-                if (!movedLeft) {
+            } else if (moved && zeroMatrix != null) {
+                long dT = event.timestamp - timestamp;
+                if (dT > 1_000_000_000l) {
+                    moved = false;
+                } else {
+                    calcAngelChange(event);
+                    if (Math.abs(angleChange[0]) < 0.1 && Math.abs(angleChange[1]) < 0.1) {
+                        vibrator.vibrate(200);
+                        moved = false;
+                    }
+                }
+            } else if (zeroMatrix != null) {
+                calcAngelChange(event);
+                if (angleChange[0] > 0.45 && angleChange[1] < 0) {
+                    timestamp = event.timestamp;
+                    vibrator.vibrate(200);
                     moveRight();
-                } else {
-                    unlockFromLeft();
-                }
-            } else if (angleChange[0] < -0.45 && angleChange[1] > 0) {
-                currentMatrix = tempCurrent.clone();
-                if (!movedRight) {
+                } else if (angleChange[0] < -0.45 && angleChange[1] > 0) {
+                    timestamp = event.timestamp;
+                    vibrator.vibrate(200);
                     moveLeft();
-                } else {
-                    unlockFromRight();
                 }
+            } else {
+                Log.d(TAG, "not calibrated");
             }
         }
     }
 
-    private void unlockFromRight() {
-        Log.d(TAG, "Unlocked from right:\n" +
-                "X: " + decimalFormat.format(angleChange[0]) + "\n" +
-                "Y: " + decimalFormat.format(angleChange[1]));
-        movedRight = false;
-    }
-
     private void moveLeft() {
-        Log.d(TAG, "Move left, locking:\n" +
-                "X: " + decimalFormat.format(angleChange[0]) + "\n" +
-                "Y: " + decimalFormat.format(angleChange[1]));
+        Log.d(TAG, "Move left");
         move("left");
-        movedLeft = true;
-    }
-
-    private void unlockFromLeft() {
-        Log.d(TAG, "Unlocked from left:\n" +
-                "X: " + decimalFormat.format(angleChange[0]) + "\n" +
-                "Y: " + decimalFormat.format(angleChange[1]));
-        movedLeft = false;
     }
 
     private void moveRight() {
-        Log.d(TAG, "Move right, locking:\n" +
-                "X: " + decimalFormat.format(angleChange[0]) + "\n" +
-                "Y: " + decimalFormat.format(angleChange[1]));
+        Log.d(TAG, "Move right");
         move("right");
-        movedRight = true;
     }
 
     private void calcAngelChange(SensorEvent event) {
-        float[] prevMatrix = currentMatrix.clone();
-        SensorManager.getRotationMatrixFromVector(tempCurrent, event.values);
-        SensorManager.getAngleChange(angleChange, tempCurrent, prevMatrix);
+        SensorManager.getRotationMatrixFromVector(currentMatrix, event.values);
+        SensorManager.getAngleChange(angleChange, currentMatrix, zeroMatrix);
     }
 
     private void calibrate(SensorEvent event) {
-        currentMatrix = new float[16];
-        SensorManager.getRotationMatrixFromVector(currentMatrix, event.values);
+        zeroMatrix = new float[16];
+        SensorManager.getRotationMatrixFromVector(zeroMatrix, event.values);
     }
 
     private void move(String direction) {
         Log.d(TAG, direction);
+        moved = true;
         handleMovement(direction);
     }
 
