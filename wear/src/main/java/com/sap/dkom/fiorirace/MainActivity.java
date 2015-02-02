@@ -51,10 +51,20 @@ public class MainActivity extends Activity {
 
     private void calibrate(boolean isCalibrate) {
         if (isCalibrate) {
-            calibrateTextView.setText("Calibrating");
+            calibrateTextView.post(new Runnable() {
+                @Override
+                public void run() {
+                    calibrateTextView.setText("Calibrating!");
+                }
+            });
             mSensorEventListener.setCalibrate(true);
         } else {
-            calibrateTextView.setText("GO!");
+            calibrateTextView.post(new Runnable() {
+                @Override
+                public void run() {
+                    calibrateTextView.setText("GO!");
+                }
+            });
             mSensorEventListener.setCalibrate(false);
         }
     }
