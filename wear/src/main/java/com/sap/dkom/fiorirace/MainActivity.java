@@ -128,6 +128,7 @@ public class MainActivity extends Activity {
         mSensorEventListener = new OrientationSensorListener(this) {
             @Override
             protected void handleMovement(String direction) {
+                calibrateTextView.setText(direction);
                 sendDirction(direction);
             }
         };
