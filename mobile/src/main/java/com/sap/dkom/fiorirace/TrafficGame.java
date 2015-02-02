@@ -1,5 +1,6 @@
 package com.sap.dkom.fiorirace;
 
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
@@ -38,8 +39,12 @@ public class TrafficGame extends Table {
     private float speed = 1.3f;
     private int time = 0;
     private float startTime = TimeUtils.millis();
+    private Game game;
+    private MainActivity activity;
 
-    public TrafficGame() {
+    public TrafficGame(Game fioriRace, MainActivity activity) {
+        this.game = fioriRace;
+        this.activity = activity;
         setBounds(0, 0, FioriRace.WIDTH, FioriRace.HEIGHT);
         setClip(true);
         backgroundRoad = new InfiniteScrollBg(getWidth(), getHeight());
@@ -135,6 +140,8 @@ public class TrafficGame extends Table {
                     case 0:
                         live3.setVisible(false);
                         // TODO: GAME OVER SCREEN
+                        GameOverScreen gos = new GameOverScreen(this.game, this.activity, score);
+                        this.game.setScreen(gos);
                         break;
                 }
                 if (PLAY_SOUNDS) {

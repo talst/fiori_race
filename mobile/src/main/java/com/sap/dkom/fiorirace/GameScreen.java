@@ -2,6 +2,7 @@ package com.sap.dkom.fiorirace;
 
 import android.os.Bundle;
 
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
@@ -52,11 +53,11 @@ public class GameScreen implements Screen, GestureListener {
     };
     private Node mWearableNode;
     private MainActivity activity;
-    public GameScreen(MainActivity activity) {
+    public GameScreen(Game fioriRace, MainActivity activity) {
 
         this.activity = activity;
         stage = new Stage(new StretchViewport(FioriRace.WIDTH, FioriRace.HEIGHT));
-        trafficGame = new TrafficGame();
+        trafficGame = new TrafficGame(fioriRace, activity);
         stage.addActor(trafficGame);
         mGoogleApiClient = new GoogleApiClient.Builder(MainActivity.getAppContext())
                 .addConnectionCallbacks(new GoogleApiClient.ConnectionCallbacks() {

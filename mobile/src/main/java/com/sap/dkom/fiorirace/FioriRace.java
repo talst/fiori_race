@@ -12,7 +12,7 @@ public class FioriRace extends Game {
     @Override
     public void create() {
         Assets.load();
-        gameScreen = new GameScreen(this.activity);
+        gameScreen = new GameScreen(this, this.activity);
         splash = new SplashScreen(this, gameScreen, this.activity);
         //setScreen(gameScreen);
         setScreen(splash);
