@@ -8,6 +8,7 @@ import android.view.SurfaceView;
 import android.view.View;
 import android.view.WindowManager;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.android.AndroidApplication;
 import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
 import com.google.android.gms.common.ConnectionResult;
@@ -59,7 +60,8 @@ public class MainActivity extends AndroidApplication implements SurfaceHolder.Ca
                 if (s.hasNext()) arg0 = s.next();
                 showHB(arg0);
             } else if (command.equals("stop")) {
-                moveTaskToBack(true);
+                Gdx.app.exit();
+                //moveTaskToBack(true);
             }
         }
     };
@@ -128,11 +130,15 @@ public class MainActivity extends AndroidApplication implements SurfaceHolder.Ca
 
         AndroidApplicationConfiguration config = new AndroidApplicationConfiguration();
 
-        initialize(new FioriRace(), config);
+        FioriRace race = new FioriRace();
+        race.setActivity(this);
+        initialize(race, config);
     }
 
     public void onBackPressed() {
         finish();
+        this.sendToWearable("stop", null, null);
+        Gdx.app.exit();
         /*final Dialog dialog = new Dialog(this);
         dialog.setTitle("More by TheInvader360");
 
@@ -263,8 +269,10 @@ public class MainActivity extends AndroidApplication implements SurfaceHolder.Ca
         doMove("left");
     }
 
-    private void sendToWearable(String path, byte[] data, final ResultCallback<MessageApi.SendMessageResult> callback) {
+    public void sendToWearable(String path, byte[] data, final ResultCallback<MessageApi.SendMessageResult> callback) {
+
         if (mWearableNode != null) {
+            Log.d(TAG, "Trying to send message " + path);
             PendingResult<MessageApi.SendMessageResult> pending = Wearable.MessageApi.sendMessage(mGoogleApiClient, mWearableNode.getId(), path, data);
             pending.setResultCallback(new ResultCallback<MessageApi.SendMessageResult>() {
                 @Override

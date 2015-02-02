@@ -173,7 +173,7 @@ public class MainActivity extends Activity {
     @Override
     protected void onPause() {
         super.onPause();
-        sensorManager.unregisterListener(mSensorEventListener, sensorManager.getDefaultSensor(Sensor.TYPE_GAME_ROTATION_VECTOR));
+        sensorManager.unregisterListener(mSensorEventListener, sensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR));
         if (mPhoneNode != null) {
             sendToPhone("stop", null, null);
         } else {
@@ -184,7 +184,7 @@ public class MainActivity extends Activity {
     @Override
     protected void onResume() {
         Log.d(TAG, "onResume");
-        sensorManager.registerListener(mSensorEventListener, sensorManager.getDefaultSensor(Sensor.TYPE_GAME_ROTATION_VECTOR), SensorManager.SENSOR_DELAY_GAME);
+        sensorManager.registerListener(mSensorEventListener, sensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR), SensorManager.SENSOR_DELAY_GAME);
         if (mPhoneNode != null) {
             sendToPhone("start", null, null);
         } else {

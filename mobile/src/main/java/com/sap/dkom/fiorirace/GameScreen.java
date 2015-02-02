@@ -51,8 +51,10 @@ public class GameScreen implements Screen, GestureListener {
         }
     };
     private Node mWearableNode;
+    private MainActivity activity;
+    public GameScreen(MainActivity activity) {
 
-    public GameScreen() {
+        this.activity = activity;
         stage = new Stage(new StretchViewport(FioriRace.WIDTH, FioriRace.HEIGHT));
         trafficGame = new TrafficGame();
         stage.addActor(trafficGame);

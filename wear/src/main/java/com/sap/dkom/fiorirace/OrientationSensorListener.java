@@ -37,8 +37,8 @@ abstract public class OrientationSensorListener implements SensorEventListener {
 
         if (event.accuracy == SensorManager.SENSOR_STATUS_UNRELIABLE) return;
 
-
-        if (event.sensor.getType() == Sensor.TYPE_GAME_ROTATION_VECTOR) {
+        Log.d(TAG, event.sensor.getType() + "");
+        if (event.sensor.getType() == Sensor.TYPE_ROTATION_VECTOR) {
             if (calibrate) {
                 calibrate(event);
             } else if (moved && zeroMatrix != null) {
