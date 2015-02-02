@@ -17,3 +17,10 @@ car
   orig: 120, 64
   offset: 0, 0
   index: -1
+heart
+  rotate: false
+  xy: 123, 1
+  size: 24, 29
+  orig: 24, 29
+  offset: 0, 0
+  index: -1

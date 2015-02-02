@@ -8,11 +8,13 @@ public class Assets {
     public static TextureAtlas atlas;
     public static TextureRegion car;
     public static TextureRegion road;
+    public static TextureRegion heart;
 
     public static void load() {
         atlas = new TextureAtlas(Gdx.files.internal("images.atlas"));
         car = atlas.findRegion("car");
         road = atlas.findRegion("road");
+        heart = atlas.findRegion("heart");
     }
 
     public static void dispose() {
