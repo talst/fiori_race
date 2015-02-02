@@ -33,6 +33,7 @@ public class TrafficGame extends Table {
     private Array<EnemyCar> enemyCars;
     private long lastCarTime = 0;
     private int score = 0;
+    private int lives = 3;
     private LabelGroup group;
     private float speed = 1.3f;
     private int time = 0;
@@ -65,13 +66,14 @@ public class TrafficGame extends Table {
 
         LabelGroup groupLives = new LabelGroup();
         live1 = new Live();
-        live1.setBounds(730f, 360, live1.getWidth(), live1.getHeight());
+        live1.setBounds(760f, 340, live1.getWidth(), live1.getHeight());
         groupLives.addActor(live1);
         live2 = new Live();
-        live2.setBounds(730f, 400, live2.getWidth(), live2.getHeight());
+        live2.setBounds(760f, 390, live2.getWidth(), live2.getHeight());
         groupLives.addActor(live2);
         live3 = new Live();
-        live3.setBounds(730f, 440, live3.getWidth(), live3.getHeight());
+        live3.setBounds(760f, 440, live3.getWidth(), live3.getHeight());
+
         groupLives.addActor(live3);
 
         addActor(groupLives);
@@ -81,7 +83,7 @@ public class TrafficGame extends Table {
         scoreLabel.setFontScale(2f, 2f);
         group.addActor(scoreLabel);
 
-        group.setBounds(750f, 50, 10, 10);
+        group.setBounds(760f, 50, 10, 10);
         group.addAction(Actions.rotateBy(-90));
         addActor(group);
     }
@@ -121,6 +123,19 @@ public class TrafficGame extends Table {
                     } else {
                         enemyCar.crash(false, false);
                     }
+                }
+                lives--;
+                switch (lives){
+                    case 2:
+                        live1.setVisible(false);
+                        break;
+                    case 1:
+                        live2.setVisible(false);
+                        break;
+                    case 0:
+                        live3.setVisible(false);
+                        // TODO: GAME OVER SCREEN
+                        break;
                 }
                 if (PLAY_SOUNDS) {
                     dropSound.play();

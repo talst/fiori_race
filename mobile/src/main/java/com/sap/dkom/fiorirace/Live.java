@@ -10,10 +10,10 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 public class Live extends Actor {
 
     public Live() {
-        setWidth(70);
+        setWidth(50);
         setHeight(38);
-        setRotation(180);
-        setColor(Color.YELLOW);
+        //setRotation(180);
+        //setColor(Color.YELLOW);
     }
 
     @Override
@@ -24,7 +24,7 @@ public class Live extends Actor {
     @Override
     public void draw(Batch batch, float parentAlpha) {
         batch.setColor(getColor().r, getColor().g, getColor().b, getColor().a);
-        batch.draw(Assets.car, getX(), getY(), getWidth() / 2, getHeight() / 2, getWidth(), getHeight(), 1, 1, getRotation());
+        batch.draw(Assets.heart, getX(), getY(), getWidth() / 2, getHeight() / 2, getWidth(), getHeight(), 1, 1, getRotation());
     }
 
 }

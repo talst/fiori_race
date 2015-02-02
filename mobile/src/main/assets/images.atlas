@@ -20,7 +20,7 @@ car
 heart
   rotate: false
   xy: 123, 1
-  size: 24, 29
-  orig: 24, 29
+  size: 50, 32
+  orig: 50, 32
   offset: 0, 0
   index: -1
