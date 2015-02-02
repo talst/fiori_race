@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
@@ -17,7 +18,7 @@ import java.util.Iterator;
 
 public class TrafficGame extends Table {
     private final static boolean PLAY_MUSIC = false;
-    private final static boolean PLAY_SOUNDS = true;
+    private final static boolean PLAY_SOUNDS = false;
     public final float lane2 = 390;
     public final float lane1 = 240;
     public final float lane0 = 90;
@@ -28,7 +29,7 @@ public class TrafficGame extends Table {
     private Array<EnemyCar> enemyCars;
     private long lastCarTime = 0;
     private int score = 0;
-    private Label label;
+    private LabelGroup group;
     private float speed = 1.0f;
     private int time = 0;
     private float startTime = TimeUtils.millis();
@@ -56,10 +57,14 @@ public class TrafficGame extends Table {
         textStyle = new LabelStyle();
         textStyle.font = font;
 
-        label = new Label("Score: " + score, textStyle);
-        label.setBounds(10f, 10f, 1, 2);
+        group = new LabelGroup();
+        Label label = new Label("Score: " + score, textStyle);
         label.setFontScale(1f, 1f);
-        addActor(label);
+        group.addActor(label);
+
+        group.setBounds(100f, 100f, 100, 200);
+        group.addAction(Actions.rotateBy(-90));
+        addActor(group);
     }
 
     @Override
