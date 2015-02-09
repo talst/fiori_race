@@ -24,3 +24,11 @@ heart
   orig: 50, 32
   offset: 0, 0
   index: -1
+whitecar
+  rotate: false
+  xy: 246, 58
+  size: 122, 62
+  orig: 122, 62
+  offset: 0, 0
+  index: -1
+

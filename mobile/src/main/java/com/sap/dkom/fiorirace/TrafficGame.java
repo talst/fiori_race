@@ -19,7 +19,10 @@ import java.util.Iterator;
 
 public class TrafficGame extends Table {
     private final static boolean PLAY_MUSIC = false;
-    private final static boolean PLAY_SOUNDS = true;
+    private final static boolean PLAY_SOUNDS = false;
+
+    private final static Color GAME_COLOR = Color.GREEN;
+
     public final float lane2 = 390;
     public final float lane1 = 240;
     public final float lane0 = 90;
@@ -50,6 +53,8 @@ public class TrafficGame extends Table {
         backgroundRoad = new InfiniteScrollBg(getWidth(), getHeight());
         addActor(backgroundRoad);
         playerCar = new PlayerCar(this);
+        playerCar.setColor(GAME_COLOR);
+
         addActor(playerCar);
         enemyCars = new Array<>();
         dropSound = Gdx.audio.newSound(Gdx.files.internal("smb_fireworks.wav"));
