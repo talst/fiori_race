@@ -53,7 +53,7 @@ public class GameOverScreen implements Screen, GestureListener {
         textStyle.font = font;
 
         group = new Group();
-        group.setBounds(200f, 240f, 180, 180);
+        group.setBounds(150f, 200f, 180, 180);
         group.addAction(Actions.rotateBy(-90));
 
         scoreLabel = new Label(score + "", textStyle);

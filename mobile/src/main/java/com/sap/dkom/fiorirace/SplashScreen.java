@@ -22,12 +22,13 @@ public class SplashScreen implements Screen {
     private int rendCount;
     private GameScreen screen;
     private MainActivity activity;
+    private final int CALIBRATION_TIME_IN_MS = 10000;
 
     public SplashScreen(Game g, GameScreen screen, MainActivity activity) // ** constructor called initially **//
     {
         this.activity = activity;
         this.screen = screen;
-        Gdx.app.log("my Spash Screen", "constructor called");
+
         myGame = g; // ** get Game parameter **//
         camera = new OrthographicCamera();
         camera.setToOrtho(false, 800, 400);
@@ -44,7 +45,7 @@ public class SplashScreen implements Screen {
         batch.draw(texture, 0, 0);
         batch.end();
         rendCount++;
-        if (TimeUtils.millis()>(startTime+5000)) {
+        if (TimeUtils.millis() > (startTime + CALIBRATION_TIME_IN_MS)) {
             activity.sendToWearable("offCalibrate", null, null);
             myGame.setScreen(this.screen);
         }

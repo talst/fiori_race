@@ -19,7 +19,7 @@ import java.util.Iterator;
 
 public class TrafficGame extends Table {
     private final static boolean PLAY_MUSIC = false;
-    private final static boolean PLAY_SOUNDS = false;
+    private final static boolean PLAY_SOUNDS = true;
 
     private final static Color GAME_COLOR = Color.GREEN;
 
@@ -30,20 +30,18 @@ public class TrafficGame extends Table {
     Sound dropSound;
     Music rainMusic;
     Label scoreLabel;
-    Live live1;
-    Live live2;
-    Live live3;
+    Life life1, life2, life3;
     private InfiniteScrollBg backgroundRoad;
     private Array<EnemyCar> enemyCars;
     private long lastCarTime = 0;
     private int score = 0;
-    private int lives = 3;
     private LabelGroup group;
     private float speed = 1.3f;
     private int time = 0;
     private float startTime = TimeUtils.millis();
     private Game game;
     private MainActivity activity;
+    private int lives = 3;
 
     public TrafficGame(Game fioriRace, MainActivity activity) {
         this.game = fioriRace;
@@ -75,21 +73,20 @@ public class TrafficGame extends Table {
         group = new LabelGroup();
 
         LabelGroup groupLives = new LabelGroup();
-        live1 = new Live();
-        live1.setBounds(760f, 340, live1.getWidth(), live1.getHeight());
-        groupLives.addActor(live1);
-        live2 = new Live();
-        live2.setBounds(760f, 390, live2.getWidth(), live2.getHeight());
-        groupLives.addActor(live2);
-        live3 = new Live();
-        live3.setBounds(760f, 440, live3.getWidth(), live3.getHeight());
+        life1 = new Life();
+        life1.setBounds(760f, 340, life1.getWidth(), life1.getHeight());
+        groupLives.addActor(life1);
+        life2 = new Life();
+        life2.setBounds(760f, 390, life2.getWidth(), life2.getHeight());
+        groupLives.addActor(life2);
+        life3 = new Life();
+        life3.setBounds(760f, 440, life3.getWidth(), life3.getHeight());
 
-        groupLives.addActor(live3);
+        groupLives.addActor(life3);
 
         addActor(groupLives);
 
         scoreLabel = new Label("" + score, textStyle);
-        //scoreLabel.setBounds(10f, 10f, 1, 2);
         scoreLabel.setFontScale(2f, 2f);
         group.addActor(scoreLabel);
 
@@ -98,17 +95,31 @@ public class TrafficGame extends Table {
         addActor(group);
     }
 
+    private boolean gameEnded = false;
+
     @Override
     public void act(float delta) {
 
         super.act(delta * speed);
-        //speed += 0.001;
-
-        if (TimeUtils.nanoTime() - lastCarTime > 3000000000f) spawnCar();
+        speed += 0.001;
 
         if (TimeUtils.nanoTime() - startTime > 1000000000f) {
             startTime = TimeUtils.nanoTime();
             time++;
+        }
+
+        drawEnemyCars();
+        scoreLabel.setText(score + "");
+    }
+
+    private void drawEnemyCars() {
+        if (gameEnded)
+        {
+            return;
+        }
+
+        if (TimeUtils.nanoTime() - lastCarTime > 3000000000f) {
+            spawnCar();
         }
 
         Iterator<EnemyCar> iter = enemyCars.iterator();
@@ -135,35 +146,51 @@ public class TrafficGame extends Table {
                     }
                 }
                 lives--;
-                switch (lives){
-                    case 2:
-                        live1.setVisible(false);
-                        break;
-                    case 1:
-                        live2.setVisible(false);
-                        break;
-                    case 0:
-                        live3.setVisible(false);
-                        // TODO: GAME OVER SCREEN
-                        GameOverScreen gos = new GameOverScreen(this.game, this.activity, score);
-                        this.game.setScreen(gos);
-                        break;
-                }
+                updateLives();
                 if (PLAY_SOUNDS) {
                     dropSound.play();
                 }
             }
         }
+    }
 
-        scoreLabel.setText(score + "");
+    private void updateLives(){
+        switch (lives){
+            case 2:
+                life1.setVisible(false);
+                break;
+            case 1:
+                life2.setVisible(false);
+                break;
+            case 0:
+                life3.setVisible(false);
+                endGame();
+                break;
+        }
+    }
+
+    private void endGame() {
+        gameEnded = true;
+        enemyCars.clear();
+        GameOverScreen gos = new GameOverScreen(this.game, this.activity, score);
+        this.game.setScreen(gos);
     }
 
     private void spawnCar() {
         int lane = MathUtils.random(0, 2);
         float yPos = 0;
-        if (lane == 0) yPos = lane0;
-        if (lane == 1) yPos = lane1;
-        if (lane == 2) yPos = lane2;
+        switch (lane){
+            case 0:
+                yPos = lane0;
+                break;
+            case 1:
+                yPos = lane1;
+                break;
+            case 2:
+                yPos = lane2;
+                break;
+        }
+
         EnemyCar enemyCar = new EnemyCar(getWidth(), yPos, MathUtils.random(4.0f, 6.0f));
         enemyCars.add(enemyCar);
         addActor(enemyCar);

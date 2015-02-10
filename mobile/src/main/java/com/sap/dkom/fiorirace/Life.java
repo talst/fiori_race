@@ -7,13 +7,11 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 /**
  * Created by I072673 on 02/02/2015.
  */
-public class Live extends Actor {
+public class Life extends Actor {
 
-    public Live() {
+    public Life() {
         setWidth(50);
         setHeight(38);
-        //setRotation(180);
-        //setColor(Color.YELLOW);
     }
 
     @Override
