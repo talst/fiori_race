@@ -10,6 +10,9 @@ public class Assets {
     public static TextureRegion road;
     public static TextureRegion heart;
     public static TextureRegion whitecar;
+    public static TextureRegion convertable;
+    public static TextureRegion purplecar;
+    public static TextureRegion orangecar;
 
     public static void load() {
         atlas = new TextureAtlas(Gdx.files.internal("images.atlas"));
@@ -17,6 +20,9 @@ public class Assets {
         road = atlas.findRegion("road");
         heart = atlas.findRegion("heart");
         whitecar = atlas.findRegion("whitecar");
+        convertable = atlas.findRegion("convertable");
+        purplecar = atlas.findRegion("purplecar");
+        orangecar = atlas.findRegion("orangecar");
     }
 
     public static void dispose() {

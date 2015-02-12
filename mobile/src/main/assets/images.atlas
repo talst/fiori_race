@@ -31,4 +31,25 @@ whitecar
   orig: 122, 62
   offset: 0, 0
   index: -1
+convertable
+  rotate: false
+  xy: 283, 0
+  size: 128, 58
+  orig: 128, 58
+  offset: 0, 0
+  index: -1
+purplecar
+  rotate: false
+  xy: 171, 0
+  size: 108, 58
+  orig: 108, 58
+  offset: 0, 0
+  index: -1
+orangecar
+  rotate: false
+  xy: 371, 60
+  size: 113, 55
+  orig: 113, 55
+  offset: 0, 0
+  index: -1
 

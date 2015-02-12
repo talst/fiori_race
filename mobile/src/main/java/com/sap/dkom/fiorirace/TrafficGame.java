@@ -18,7 +18,8 @@ import com.badlogic.gdx.utils.TimeUtils;
 import java.util.Iterator;
 
 public class TrafficGame extends Table {
-    private final static boolean PLAY_MUSIC = false;
+    public final static String NAME = "Some user for leaderboard";
+    private final static boolean PLAY_MUSIC = true;
     private final static boolean PLAY_SOUNDS = true;
 
     private final static Color GAME_COLOR = Color.GREEN;
@@ -56,7 +57,7 @@ public class TrafficGame extends Table {
         addActor(playerCar);
         enemyCars = new Array<>();
         dropSound = Gdx.audio.newSound(Gdx.files.internal("smb_fireworks.wav"));
-        rainMusic = Gdx.audio.newMusic(Gdx.files.internal("smb_fireworks.wav"));
+        rainMusic = Gdx.audio.newMusic(Gdx.files.internal("passingBreeze.mp3"));
         rainMusic.setLooping(true);
         if (PLAY_MUSIC) {
             rainMusic.play();
@@ -101,7 +102,7 @@ public class TrafficGame extends Table {
     public void act(float delta) {
 
         super.act(delta * speed);
-        speed += 0.001;
+        //speed += 0.001;
 
         if (TimeUtils.nanoTime() - startTime > 1000000000f) {
             startTime = TimeUtils.nanoTime();
@@ -113,12 +114,11 @@ public class TrafficGame extends Table {
     }
 
     private void drawEnemyCars() {
-        if (gameEnded)
-        {
+        if (gameEnded) {
             return;
         }
 
-        if (TimeUtils.nanoTime() - lastCarTime > 3000000000f) {
+        if (TimeUtils.nanoTime() - lastCarTime > 2400000000f) {
             spawnCar();
         }
 
