@@ -8,7 +8,6 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
@@ -24,7 +23,6 @@ public class SplashScreen implements Screen {
     private Stage stage;
     private Label scoreLabel;
     private Group group;
-    private SpriteBatch batch;
     private Game myGame;
     private Texture texture;
     private OrthographicCamera camera;
@@ -43,8 +41,7 @@ public class SplashScreen implements Screen {
         camera = new OrthographicCamera();
         camera.setToOrtho(false, 800, 400);
         Label.LabelStyle textStyle = new Label.LabelStyle();
-        BitmapFont font = new BitmapFont();
-        textStyle.font = font;
+        textStyle.font = new BitmapFont();
 
         group = new Group();
         group.setBounds(100, 80f, 80f, 120f);
@@ -98,7 +95,6 @@ public class SplashScreen implements Screen {
     }
 
 
-
     @Override
     public void hide() {
         Gdx.app.log("my Splash Screen", "hide called");
@@ -116,7 +112,6 @@ public class SplashScreen implements Screen {
     @Override
     public void dispose() {
         texture.dispose();
-        //batch.dispose();
     }
 
 }

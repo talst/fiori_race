@@ -39,33 +39,23 @@ public class DataLayerListenerService extends WearableListenerService {
     @Override
     public void onMessageReceived(MessageEvent m) {
         if (D) Log.d(TAG, "onMessageReceived: " + m.getPath());
-        if (m.getPath().equals("start")) {
+        if (m.getPath().equals("start") && !isForeground(getPackageName())) {
             Intent startIntent = new Intent(this, MainActivity.class);
             startIntent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT | Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(startIntent);
         }
     }
 
-    public boolean isForeground(String PackageName) {
-        // Get the Activity Manager
+    public boolean isForeground(String myPackage) {
         ActivityManager manager = (ActivityManager) getSystemService(ACTIVITY_SERVICE);
+        List<ActivityManager.RunningTaskInfo> runningTaskInfo = manager.getRunningTasks(1);
 
-        // Get a list of running tasks, we are only interested in the last one,
-        // the top most so we give a 1 as parameter so we only get the topmost.
-        List<ActivityManager.RunningTaskInfo> task = manager.getRunningTasks(1);
-
-        // Get the info we need for comparison.
-        ComponentName componentInfo = task.get(0).topActivity;
-
-        // Check if it matches our package name.
-        if (componentInfo.getPackageName().equals(PackageName)) return true;
-
-        // If not then our app is not on the foreground.
-        return false;
+        ComponentName componentInfo = runningTaskInfo.get(0).topActivity;
+        return componentInfo.getPackageName().equals(myPackage);
     }
+
 
     @Override
     public void onDataChanged(DataEventBuffer dataEvents) {
-        // i don't care
     }
 }

@@ -1,13 +1,11 @@
 package com.sap.dkom.fiorirace;
 
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
-import com.google.android.gms.wearable.Asset;
 
 public class EnemyCar extends Actor {
 
@@ -20,7 +18,7 @@ public class EnemyCar extends Actor {
 
         region = Assets.whitecar;
         int rnd = MathUtils.random(0, 5);
-        switch (rnd){
+        switch (rnd) {
             case 0:
                 region = Assets.convertable;
                 break;
@@ -54,7 +52,6 @@ public class EnemyCar extends Actor {
 
     @Override
     public void draw(Batch batch, float parentAlpha) {
-        //batch.setColor(getColor().r, getColor().g, getColor().b, getColor().a);
         batch.draw(region, getX(), getY(), getWidth() / 2, getHeight() / 2, getWidth(), getHeight(), 1, 1, getRotation());
     }
 

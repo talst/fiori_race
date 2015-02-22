@@ -97,35 +97,11 @@ public class MainActivity extends Activity {
     @Override
     protected void onStop() {
         super.onStop();
-        if (mPhoneNode != null) {
-            sendToPhone("stop", null, new ResultCallback<MessageApi.SendMessageResult>() {
-                @Override
-                public void onResult(MessageApi.SendMessageResult result) {
-                    if (!result.getStatus().isSuccess()) {
-                        Log.e(TAG, "ERROR: failed to send Message: " + result.getStatus());
-                    }
-                    moveTaskToBack(true);
-                }
-            });
-        } else {
-            findPhoneNode();
-        }
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (mPhoneNode != null) {
-            sendToPhone("stop", null, new ResultCallback<MessageApi.SendMessageResult>() {
-                @Override
-                public void onResult(MessageApi.SendMessageResult result) {
-                    if (!result.getStatus().isSuccess()) {
-                        Log.e(TAG, "ERROR: failed to send Message: " + result.getStatus());
-                    }
-                    moveTaskToBack(true);
-                }
-            });
-        }
         Wearable.MessageApi.removeListener(mGoogleApiClient, mMessageListener);
     }
 

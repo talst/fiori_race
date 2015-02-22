@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
@@ -16,7 +17,6 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.TimeUtils;
 
 import java.util.Iterator;
-
 public class TrafficGame extends Table {
     public final static String NAME = "Some user for leaderboard";
     private final static boolean PLAY_MUSIC = true;
@@ -29,24 +29,24 @@ public class TrafficGame extends Table {
     public final float lane0 = 90;
     public PlayerCar playerCar;
     Sound dropSound;
-    Music rainMusic;
+    Music gameMusic;
     Label scoreLabel;
     Life life1, life2, life3;
     private InfiniteScrollBg backgroundRoad;
     private Array<EnemyCar> enemyCars;
     private long lastCarTime = 0;
     private int score = 0;
-    private LabelGroup group;
+    private Group group;
     private float speed = 1.3f;
-    private int time = 0;
     private float startTime = TimeUtils.millis();
     private Game game;
     private MainActivity activity;
     private int lives = 3;
 
-    public TrafficGame(Game fioriRace, MainActivity activity) {
+    public TrafficGame(Game fioriRace, MainActivity activity, Music gameMusic) {
         this.game = fioriRace;
         this.activity = activity;
+        this.gameMusic = gameMusic;
         setBounds(0, 0, FioriRace.WIDTH, FioriRace.HEIGHT);
         setClip(true);
         backgroundRoad = new InfiniteScrollBg(getWidth(), getHeight());
@@ -57,23 +57,22 @@ public class TrafficGame extends Table {
         addActor(playerCar);
         enemyCars = new Array<>();
         dropSound = Gdx.audio.newSound(Gdx.files.internal("smb_fireworks.wav"));
-        rainMusic = Gdx.audio.newMusic(Gdx.files.internal("passingBreeze.mp3"));
-        rainMusic.setLooping(true);
-        if (PLAY_MUSIC) {
-            rainMusic.play();
+        if (this.gameMusic == null) {
+            this.gameMusic = Gdx.audio.newMusic(Gdx.files.internal("passingBreeze.mp3"));
+            this.gameMusic.setLooping(true);
+        }
+        if (PLAY_MUSIC && !this.gameMusic.isPlaying()) {
+            this.gameMusic.play();
         }
 
-        // scoring
         LabelStyle textStyle;
         BitmapFont font = new BitmapFont();
-        //font.setUseIntegerPositions(false);(Optional)
 
         textStyle = new LabelStyle();
         textStyle.font = font;
+        group = new Group();
 
-        group = new LabelGroup();
-
-        LabelGroup groupLives = new LabelGroup();
+        Group groupLives = new Group();
         life1 = new Life();
         life1.setBounds(760f, 340, life1.getWidth(), life1.getHeight());
         groupLives.addActor(life1);
@@ -100,16 +99,14 @@ public class TrafficGame extends Table {
 
     @Override
     public void act(float delta) {
-
         super.act(delta * speed);
         //speed += 0.001;
-
         if (TimeUtils.nanoTime() - startTime > 1000000000f) {
             startTime = TimeUtils.nanoTime();
-            time++;
         }
 
-        drawEnemyCars();
+
+//        drawEnemyCars();
         scoreLabel.setText(score + "");
     }
 
@@ -172,7 +169,7 @@ public class TrafficGame extends Table {
     private void endGame() {
         gameEnded = true;
         enemyCars.clear();
-        GameOverScreen gos = new GameOverScreen(this.game, this.activity, score);
+        GameOverScreen gos = new GameOverScreen(this.game, this.activity, score, gameMusic);
         this.game.setScreen(gos);
     }
 

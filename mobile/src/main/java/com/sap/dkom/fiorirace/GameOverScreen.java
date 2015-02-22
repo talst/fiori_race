@@ -3,6 +3,7 @@ package com.sap.dkom.fiorirace;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -16,12 +17,9 @@ import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.utils.TimeUtils;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 
-import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
-import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
@@ -37,25 +35,20 @@ import java.util.List;
  */
 public class GameOverScreen implements Screen, GestureListener {
 
+    private final Music gameMusic;
     private Stage stage;
     private SpriteBatch batch;
     private Game myGame;
     private Texture texture;
     private OrthographicCamera camera;
-    private long startTime;
-    private int rendCount;
-    private GameScreen screen;
     private MainActivity activity;
-    private TrafficGame trafficGame;
-    private int score;
     Label scoreLabel;
     Group group;
 
-    public GameOverScreen(Game g, MainActivity activity, int score) // ** constructor called initially **//
+    public GameOverScreen(Game g, MainActivity activity, int score, Music gameMusic) // ** constructor called initially **//
     {
-        this.score = score;
+        this.gameMusic = gameMusic;
         this.activity = activity;
-        this.screen = screen;
 
         myGame = g; // ** get Game parameter **//
         camera = new OrthographicCamera();
@@ -63,8 +56,7 @@ public class GameOverScreen implements Screen, GestureListener {
         batch = new SpriteBatch();
 
         Label.LabelStyle textStyle = new Label.LabelStyle();
-        BitmapFont font = new BitmapFont();
-        textStyle.font = font;
+        textStyle.font = new BitmapFont();
 
         group = new Group();
         group.setBounds(150f, 200f, 180, 180);
@@ -93,19 +85,17 @@ public class GameOverScreen implements Screen, GestureListener {
 
         try {
             // Add your data
-            List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
+            List<NameValuePair> nameValuePairs = new ArrayList<>(2);
             nameValuePairs.add(new BasicNameValuePair("value", score));
             nameValuePairs.add(new BasicNameValuePair("color", color));
             nameValuePairs.add(new BasicNameValuePair("name", name));
             httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 
             // Execute HTTP Post Request
-            HttpResponse response = httpclient.execute(httppost);
+            httpclient.execute(httppost);
 
-        } catch (ClientProtocolException e) {
-            // TODO Auto-generated catch block
         } catch (IOException e) {
-            // TODO Auto-generated catch block
+            e.printStackTrace();
         }
     }
 
@@ -123,21 +113,18 @@ public class GameOverScreen implements Screen, GestureListener {
         stage.draw();
 
 
-
-        postData(trafficGame.NAME, getColor(), String.valueOf(score));
+        int score = 0;
+        postData(TrafficGame.NAME, getColor(), String.valueOf(score));
     }
 
-    private String getColor(){
-        if(trafficGame.GAME_COLOR == Color.GREEN){
+    private String getColor() {
+        if (TrafficGame.GAME_COLOR == Color.GREEN) {
             return "green";
-        } else
-        if(trafficGame.GAME_COLOR == Color.RED){
+        } else if (TrafficGame.GAME_COLOR == Color.RED) {
             return "red";
-        } else
-        if(trafficGame.GAME_COLOR == Color.YELLOW){
+        } else if (TrafficGame.GAME_COLOR == Color.YELLOW) {
             return "yellow";
-        } else
-        if(trafficGame.GAME_COLOR == Color.BLUE){
+        } else if (TrafficGame.GAME_COLOR == Color.BLUE) {
             return "blue";
         }
         return "black";
@@ -152,7 +139,6 @@ public class GameOverScreen implements Screen, GestureListener {
         Gdx.input.setInputProcessor(new GestureDetector(this));
         texture = new Texture(Gdx.files.internal("gameover.jpg")); //** texture is now the splash image **//
 
-        startTime = TimeUtils.millis();
     }
 
     @Override
@@ -182,7 +168,7 @@ public class GameOverScreen implements Screen, GestureListener {
     @Override
     public boolean tap(float x, float y, int count, int button) {
         myGame.setScreen(new SplashScreen(myGame,
-                new GameScreen(myGame, activity), activity));
+                new GameScreen(myGame, activity, gameMusic), activity));
         return false;
     }
 

@@ -3,9 +3,6 @@ package com.sap.dkom.fiorirace;
 import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.SurfaceHolder;
-import android.view.SurfaceView;
-import android.view.View;
 import android.view.WindowManager;
 
 import com.badlogic.gdx.Gdx;
@@ -25,16 +22,14 @@ import java.util.Scanner;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class MainActivity extends AndroidApplication implements SurfaceHolder.Callback {
+public class MainActivity extends AndroidApplication {
 
     private static final String TAG = "WearFiori";
     private static final boolean D = true;
     private static Context context;
-    public boolean mPreviewRunning = false;
     private GoogleApiClient mGoogleApiClient;
     private Node mWearableNode = null;
     private int displayFrameLag = 0;
-    private long lastMessageTime = 0;
     /**
      * Messages from Wear to Phone
      */
@@ -42,32 +37,14 @@ public class MainActivity extends AndroidApplication implements SurfaceHolder.Ca
         @Override
         public void onMessageReceived(MessageEvent m) {
             if (D) Log.d(TAG, "onMessageReceived: " + m.getPath());
-            lastMessageTime = System.currentTimeMillis();
             Scanner s = new Scanner(m.getPath());
             String command = s.next();
-
-            // Showing the action in the Main Text View:
-//            TextView myAwesomeTextView = (TextView)findViewById(R.id.textView1);
-//            myAwesomeTextView.setText(command);
-
-            // Example to commands received from WEAR:
-            if (command.equals("left")) {
-                doMove("left");
-            } else if (command.equals("right")) {
-                doMove("right");
-            } else if (command.equals("heart")) {
-                String arg0 = "0";
-                if (s.hasNext()) arg0 = s.next();
-                showHB(arg0);
-            } else if (command.equals("stop")) {
+            if (command.equals("stop")) {
                 Gdx.app.exit();
-                //moveTaskToBack(true);
             }
         }
     };
     private long displayTimeLag = 0;
-    private SurfaceHolder mSurfaceHolder;
-    private SurfaceView mSurfaceView;
 
     public static Context getAppContext() {
         return context;
@@ -104,8 +81,6 @@ public class MainActivity extends AndroidApplication implements SurfaceHolder.Ca
                 .build();
         mGoogleApiClient.connect();
 
-        lastMessageTime = System.currentTimeMillis();
-
         Timer mTimer = new Timer();
         mTimer.scheduleAtFixedRate(new TimerTask() {
             @Override
@@ -132,14 +107,6 @@ public class MainActivity extends AndroidApplication implements SurfaceHolder.Ca
         Gdx.app.exit();
     }
 
-    private void doMove(String direction) {
-        Log.d(TAG, "doMove" + direction);
-    }
-
-    private void showHB(String heartbit) {
-        Log.d(TAG, "showHB" + heartbit);
-    }
-
     private void findWearableNode() {
         PendingResult<NodeApi.GetConnectedNodesResult> nodes = Wearable.NodeApi.getConnectedNodes(mGoogleApiClient);
         nodes.setResultCallback(new ResultCallback<NodeApi.GetConnectedNodesResult>() {
@@ -147,6 +114,7 @@ public class MainActivity extends AndroidApplication implements SurfaceHolder.Ca
             public void onResult(NodeApi.GetConnectedNodesResult result) {
                 if (result.getNodes().size() > 0) {
                     mWearableNode = result.getNodes().get(0);
+                    sendToWearable("start", null, null);
                     if (D)
                         Log.d(TAG, "Found wearable: name=" + mWearableNode.getDisplayName() + ", id=" + mWearableNode.getId());
                 } else {
@@ -163,13 +131,7 @@ public class MainActivity extends AndroidApplication implements SurfaceHolder.Ca
         super.onDestroy();
     }
 
-    public void surfaceView_onClick(View view) {
-        // Just for an example:
-        doMove("left");
-    }
-
     public void sendToWearable(String path, byte[] data, final ResultCallback<MessageApi.SendMessageResult> callback) {
-
         if (mWearableNode != null) {
             Log.d(TAG, "Trying to send message " + path);
             PendingResult<MessageApi.SendMessageResult> pending = Wearable.MessageApi.sendMessage(mGoogleApiClient, mWearableNode.getId(), path, data);
@@ -198,55 +160,14 @@ public class MainActivity extends AndroidApplication implements SurfaceHolder.Ca
     @Override
     public void onResume() {
         Log.d(TAG, "onResume");
-        lastMessageTime = System.currentTimeMillis();
         super.onResume();
+
     }
 
     @Override
-    public void surfaceChanged(SurfaceHolder arg0, int arg1, int arg2, int arg3) {
-        Log.d(TAG, "surfaceChanged");
-        if (mSurfaceHolder.getSurface() == null) {
-            return;
-        }
-
-        // Example to sent to wear:
-        /*byte[] baos = null;
-        sendToWearable(String.format("show %d", System.currentTimeMillis()), baos, new ResultCallback<MessageApi.SendMessageResult>() {
-            @Override
-            public void onResult(MessageApi.SendMessageResult result) {
-             if(displayFrameLag>0) displayFrameLag--;
-            }
-        });*/
-        mPreviewRunning = true;
-    }
-
-    @Override
-    public void surfaceCreated(SurfaceHolder holder) {
-        Log.d(TAG, "surfaceCreated");
-    }
-
-//    @Override
-//    public boolean onCreateOptionsMenu(Menu menu) {
-//        // Inflate the menu; this adds items to the action bar if it is present.
-//        getMenuInflater().inflate(R.menu.main, menu);
-//        return true;
-//    }
-//
-//    @Override
-//    public boolean onOptionsItemSelected(MenuItem item) {
-//        // Handle action bar item clicks here. The action bar will
-//        // automatically handle clicks on the Home/Up button, so long
-//        // as you specify a parent activity in AndroidManifest.xml.
-//        int id = item.getItemId();
-//        if (id == R.id.action_settings) {
-//            return true;
-//        }
-//        return super.onOptionsItemSelected(item);
-//    }
-
-    @Override
-    public void surfaceDestroyed(SurfaceHolder holder) {
-        mPreviewRunning = false;
+    protected void onStop() {
+        Log.d(TAG, "onStop");
+        super.onStop();
     }
 }
 

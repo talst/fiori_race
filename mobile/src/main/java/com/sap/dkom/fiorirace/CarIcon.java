@@ -8,13 +8,9 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
  */
 public class CarIcon extends Actor {
 
-    public CarIcon()
-    {
+    public CarIcon() {
         setWidth(120);
         setHeight(68);
-
-        //setRotation(180);
-        //setColor(Color.YELLOW);
     }
 
     @Override
