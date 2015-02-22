@@ -52,4 +52,17 @@ orangecar
   orig: 113, 55
   offset: 0, 0
   index: -1
-
+truck
+  rotate: false
+  xy: 491, 60
+  size: 193, 59
+  orig: 193, 59
+  offset: 0, 0
+  index: -1
+yellowcar
+  rotate: false
+  xy: 415, 0
+  size: 119, 59
+  orig: 119, 59
+  offset: 0, 0
+  index: -1

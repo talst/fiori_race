@@ -17,9 +17,9 @@ public class EnemyCar extends Actor {
     public EnemyCar(float x, float y, float speed) {
         setWidth(160);
         setHeight(85);
-        setPosition(x, y - getHeight() / 2);
+
         region = Assets.whitecar;
-        int rnd = MathUtils.random(0, 3);
+        int rnd = MathUtils.random(0, 5);
         switch (rnd){
             case 0:
                 region = Assets.convertable;
@@ -33,8 +33,16 @@ public class EnemyCar extends Actor {
             case 3:
                 region = Assets.orangecar;
                 break;
+            case 4:
+                region = Assets.yellowcar;
+                break;
+            case 5:
+                region = Assets.truck;
+                setWidth(243);
+                setHeight(75);
+                break;
         }
-
+        setPosition(x, y - getHeight() / 2);
         addAction(Actions.moveTo(-getWidth(), getY(), speed));
     }
 
