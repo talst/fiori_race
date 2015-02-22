@@ -19,6 +19,19 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by I040335 on 02/02/2015.
  */
@@ -33,6 +46,7 @@ public class GameOverScreen implements Screen, GestureListener {
     private int rendCount;
     private GameScreen screen;
     private MainActivity activity;
+    private TrafficGame trafficGame;
     private int score;
     Label scoreLabel;
     Group group;
@@ -72,6 +86,29 @@ public class GameOverScreen implements Screen, GestureListener {
         stage.addActor(group);
     }
 
+    public void postData(String name, String color, String score) {
+        // Create a new HttpClient and Post Header
+        HttpClient httpclient = new DefaultHttpClient();
+        HttpPost httppost = new HttpPost("https://leaderboardi305845trial.hanatrial.ondemand.com/test/Leaderboard");
+
+        try {
+            // Add your data
+            List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
+            nameValuePairs.add(new BasicNameValuePair("value", score));
+            nameValuePairs.add(new BasicNameValuePair("color", color));
+            nameValuePairs.add(new BasicNameValuePair("name", name));
+            httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+
+            // Execute HTTP Post Request
+            HttpResponse response = httpclient.execute(httppost);
+
+        } catch (ClientProtocolException e) {
+            // TODO Auto-generated catch block
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+        }
+    }
+
     @Override
     public void render(float delta) {
         Gdx.gl.glClearColor(0, 0, 0, 1);
@@ -84,6 +121,26 @@ public class GameOverScreen implements Screen, GestureListener {
 
         stage.act(delta);
         stage.draw();
+
+
+
+        postData(trafficGame.NAME, getColor(), String.valueOf(score));
+    }
+
+    private String getColor(){
+        if(trafficGame.GAME_COLOR == Color.GREEN){
+            return "green";
+        } else
+        if(trafficGame.GAME_COLOR == Color.RED){
+            return "red";
+        } else
+        if(trafficGame.GAME_COLOR == Color.YELLOW){
+            return "yellow";
+        } else
+        if(trafficGame.GAME_COLOR == Color.BLUE){
+            return "blue";
+        }
+        return "black";
     }
 
     @Override
