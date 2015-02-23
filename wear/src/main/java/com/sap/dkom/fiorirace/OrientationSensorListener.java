@@ -54,11 +54,12 @@ abstract public class OrientationSensorListener implements SensorEventListener {
                 }
             } else if (zeroMatrix != null) {
                 calcAngelChange(event);
-                if (angleChange[0] > 0.45 && angleChange[1] < 0) {
+//                Log.d(TAG, "angle[0]: " + angleChange[0] + "\n" + "angle[1]" + angleChange[1]);
+                if (angleChange[0] > 0.35 && angleChange[1] < 0) {
                     timestamp = event.timestamp;
                     vibrator.vibrate(200);
                     moveRight();
-                } else if (angleChange[0] < -0.35 && angleChange[1] > 0) {
+                } else if (angleChange[0] < 0 && angleChange[1] > 0.35) {
                     timestamp = event.timestamp;
                     vibrator.vibrate(200);
                     moveLeft();

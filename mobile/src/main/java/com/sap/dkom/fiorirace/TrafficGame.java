@@ -18,7 +18,7 @@ import com.badlogic.gdx.utils.TimeUtils;
 
 import java.util.Iterator;
 public class TrafficGame extends Table {
-    public final static String NAME = "Some user for leaderboard";
+    public final static String NAME = "Some user";
     private final static boolean PLAY_MUSIC = true;
     private final static boolean PLAY_SOUNDS = true;
 
