@@ -22,7 +22,7 @@ public class TrafficGame extends Table {
     private final static boolean PLAY_MUSIC = true;
     private final static boolean PLAY_SOUNDS = true;
 
-    public final static Color GAME_COLOR = Color.GREEN;
+    public final static Color GAME_COLOR = Color.BLUE;
 
     public final float lane2 = 390;
     public final float lane1 = 240;

@@ -36,6 +36,7 @@ import java.util.List;
 public class GameOverScreen implements Screen, GestureListener {
 
     private final Music gameMusic;
+    private final int score;
     private Stage stage;
     private SpriteBatch batch;
     private Game myGame;
@@ -47,6 +48,7 @@ public class GameOverScreen implements Screen, GestureListener {
 
     public GameOverScreen(Game g, MainActivity activity, int score, Music gameMusic) // ** constructor called initially **//
     {
+        this.score = score;
         this.gameMusic = gameMusic;
         this.activity = activity;
 
@@ -113,7 +115,6 @@ public class GameOverScreen implements Screen, GestureListener {
         stage.draw();
 
 
-        int score = 0;
         postData(TrafficGame.NAME, getColor(), String.valueOf(score));
     }
 

@@ -58,7 +58,7 @@ abstract public class OrientationSensorListener implements SensorEventListener {
                     timestamp = event.timestamp;
                     vibrator.vibrate(200);
                     moveRight();
-                } else if (angleChange[0] < -0.45 && angleChange[1] > 0) {
+                } else if (angleChange[0] < -0.35 && angleChange[1] > 0) {
                     timestamp = event.timestamp;
                     vibrator.vibrate(200);
                     moveLeft();
